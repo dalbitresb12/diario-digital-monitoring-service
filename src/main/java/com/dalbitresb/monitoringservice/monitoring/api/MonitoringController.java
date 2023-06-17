@@ -1,8 +1,10 @@
 package com.dalbitresb.monitoringservice.monitoring.api;
 
 import com.dalbitresb.monitoringservice.monitoring.resources.MonitoringResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
@@ -11,6 +13,11 @@ import java.io.File;
 @RequestMapping("/api/v1/monitoring")
 public class MonitoringController {
     private static String OS = System.getProperty("os.name").toLowerCase();
+
+    @RequestMapping(method = RequestMethod.HEAD)
+    public ResponseEntity<?> getHeadMonitoringInfo() {
+        return ResponseEntity.ok().build();
+    }
 
     @GetMapping
     public MonitoringResponse getMonitoringInfo() {
@@ -21,6 +28,7 @@ public class MonitoringController {
         long totalMemory = runtime.totalMemory() / 1024 / 1024;
         long freeMemory = runtime.freeMemory() / 1024 / 1024;
 
+        // This allows the service to run on Windows or Linux containers
         File rootDrive = new File(OS.contains("win") ? "C:" : "/");
         double totalSpace = (double) (rootDrive.getTotalSpace() / 1073741824);
         double freeSpace = (double) (rootDrive.getFreeSpace() / 1073741824);
